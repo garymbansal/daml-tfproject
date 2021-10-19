@@ -1,0 +1,27 @@
+module Shipment where
+
+template Shipment
+  with
+    importer : Party
+    exporter: Party
+    shipDate: Time
+    shipDetails: Text
+    shipAmount: Decimal
+    shipCurrency: Text
+  where
+    signatory exporter
+    observer importer
+
+    ensure exporter /= importer
+    
+    controller exporter can
+      ShipGoods: ContractId Shipment
+          with             
+          do
+              create Shipment with ..
+
+    controller importer can
+      ClaimGoods: ContractId Shipment
+          with
+          do
+              create Shipment with ..

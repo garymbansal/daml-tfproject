@@ -1,0 +1,24 @@
+module PurchaseOrder where
+
+template PurchaseOrder
+  with
+    importer : Party
+    exporter: Party
+    userAdmin: Party
+    orderDate: Time
+    orderDetails: Text
+    orderPrice: Decimal
+    orderCurrency: Text
+
+  where
+    signatory importer, userAdmin
+    ensure userAdmin /= importer
+
+
+    controller exporter can
+      AcceptOrder: ContractId PurchaseOrder
+          with             
+          do
+              create PurchaseOrder with ..
+
+    
