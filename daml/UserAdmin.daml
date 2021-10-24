@@ -19,8 +19,9 @@ template Importer
         with
             poExporter: Party
             poDetails: Text
-            poPrice: Decimal
+            poAmount: Decimal
             poCurrency: Text
+            poRemarks: Text
         do
             poDate <- getTime
             
@@ -29,14 +30,15 @@ template Importer
                     exporter = poExporter
                     orderDate = poDate
                     orderDetails = poDetails
-                    orderPrice = poPrice
+                    orderAmount = poAmount
                     orderCurrency = poCurrency
+                    orderRemarks = poRemarks
                     ..
-      nonconsuming ClaimShipment : (ContractId Shipment)
+      ClaimShipment : ()
         with
-            shipId: ContractId Shipment
+            shipmentId: ContractId Shipment            
         do
-            exercise shipId ClaimGoods
+            exercise shipmentId ClaimGoods            
     
     controller userAdmin can
             RevokeImporter: ()
@@ -76,17 +78,17 @@ template Exporter
 
 
         controller exporter can
-            nonconsuming AcceptPurchaseOrder: (ContractId PurchaseOrder)
+            nonconsuming AcceptPurchaseOrder: (ContractId Shipment)
                 with
                     poId: ContractId PurchaseOrder
                 do
-                    exercise poId AcceptOrder
-
-            nonconsuming ReleaseShipment: (ContractId Shipment)
+                    exercise poId AcceptOrder                    
+                    
+            ReleaseShipment: (ContractId Shipment)
                 with
-                    shipId: ContractId Shipment
+                    shipmentId: ContractId Shipment
                 do
-                    exercise shipId ShipGoods
+                    exercise shipmentId ShipGoods
             
             
         controller userAdmin can
@@ -110,5 +112,5 @@ template ExporterRequest
                     create Exporter
                         with
                             ..
-            RejectOwnerRequest: ()
+            RejectExporterRequest: ()
                 do return ()
